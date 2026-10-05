@@ -66,6 +66,38 @@ if (prefersReducedMotion.matches || !('IntersectionObserver' in window)) {
   revealElements.forEach((element) => revealObserver.observe(element));
 }
 
+// Animate only the editable demo metrics; no patient or outcome figures are implied.
+document.querySelectorAll('[data-count-target]').forEach((counter) => {
+  const target = Number(counter.dataset.countTarget);
+  const suffix = counter.dataset.countSuffix || '';
+  const renderCount = (value) => {
+    const formatted = target < 10 ? String(value).padStart(2, '0') : String(value);
+    counter.textContent = `${formatted}${suffix}`;
+  };
+
+  if (!Number.isFinite(target) || target < 0) return;
+  if (prefersReducedMotion.matches || !('IntersectionObserver' in window)) {
+    renderCount(target);
+    return;
+  }
+
+  const counterObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const start = performance.now();
+      const duration = 900;
+      const animate = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        renderCount(Math.round(target * (1 - (1 - progress) ** 3)));
+        if (progress < 1) requestAnimationFrame(animate);
+      };
+      requestAnimationFrame(animate);
+      observer.unobserve(counter);
+    });
+  }, { threshold: 0.7 });
+  counterObserver.observe(counter);
+});
+
 // Premium, pauseable home-page carousel.
 const hero = document.querySelector('.hero');
 const heroVisual = document.querySelector('.hero-visual');
@@ -81,35 +113,35 @@ const slideCount = document.getElementById('slide-count');
 const slideDots = document.querySelectorAll('[data-slide-to]');
 const heroSlides = [
   {
-    eyebrow: `${clinic.name.toUpperCase()} · ${clinic.city.toUpperCase()}`,
-    title: 'A healthier smile<br />starts <em>with care.</em>',
-    intro: `Thoughtful dental care should feel personal, reassuring and easy to ask about. Start a conversation with ${clinic.name}.`,
-    caption: 'PERSONAL CARE, EVERY STEP',
+    eyebrow: 'A PERSONAL APPROACH TO COSMETIC CARE',
+    title: 'A smile shaped<br /><em>around you.</em>',
+    intro: 'Explore a considered approach to smile design, with a conversation about your goals and the options that may suit you.',
+    caption: 'SMILE MAKEOVER · ILLUSTRATIVE',
     image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1000&q=85',
-    alt: 'Illustrative dental clinic interior',
-    primary: 'Request a visit',
-    secondary: 'Explore treatments',
+    alt: 'Illustrative dental-care photography for the smile makeover demo slide',
+    primary: 'Discuss your goals',
+    secondary: 'Explore smile care',
     secondaryHref: 'services.html'
   },
   {
-    eyebrow: 'A THOUGHTFUL APPROACH TO CARE',
-    title: 'Feel at ease<br />with your <em>next step.</em>',
-    intro: 'A clear conversation can help you feel more prepared. Tell the clinic what is on your mind and ask about your options.',
-    caption: 'A CONVERSATION THAT STARTS WITH YOU',
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1000&q=85',
-    alt: 'Illustrative dental clinic interior',
-    primary: 'Start a conversation',
+    eyebrow: 'RESTORATIVE OPTIONS, EXPLAINED CLEARLY',
+    title: 'Restore function.<br /><em>Explore your options.</em>',
+    intro: 'Ask the dental team about restorative care, what an assessment involves and which next steps may be appropriate.',
+    caption: 'DENTAL IMPLANTS · DEMO CONTENT',
+    image: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?auto=format&fit=crop&w=1000&q=85',
+    alt: 'Illustrative dental consultation photography for the dental implants demo slide',
+    primary: 'Ask about implants',
     secondary: 'Visit the clinic',
     secondaryHref: 'contact.html'
   },
   {
-    eyebrow: `YOUR LOCAL CLINIC · ${clinic.city.toUpperCase()}`,
-    title: 'Care that feels<br /><em>closer to home.</em>',
-    intro: `Find ${clinic.name} in ${clinic.location} and get in touch before planning your visit.`,
-    caption: `LOCAL DENTAL CARE · ${clinic.city.toUpperCase()}`,
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1000&q=85',
-    alt: 'Illustrative dental clinic reception and waiting area',
-    primary: 'Plan your visit',
+    eyebrow: 'A THOUGHTFUL PLACE TO BEGIN',
+    title: 'Complete care<br /><em>starts with listening.</em>',
+    intro: `From routine questions to a new concern, start a conversation with ${clinic.name} and plan a visit that feels right for you.`,
+    caption: 'COMPLETE DENTAL CARE · DEMO',
+    image: 'https://images.unsplash.com/photo-1598256989800-fe5f95da9787?auto=format&fit=crop&w=1000&q=85',
+    alt: 'Illustrative dental clinic photography for the complete care demo slide',
+    primary: 'Book a consultation',
     secondary: 'Open directions',
     secondaryHref: 'contact.html'
   }
@@ -331,6 +363,7 @@ if (appointmentForm) {
     const formData = new FormData(appointmentForm);
     const name = String(formData.get('name') || '').trim();
     const phone = String(formData.get('phone') || '').trim();
+    const email = String(formData.get('email') || '').trim();
     const date = String(formData.get('date') || '');
     const service = String(formData.get('service') || 'Not specified');
     const details = String(formData.get('details') || '').trim();
@@ -339,9 +372,10 @@ if (appointmentForm) {
       '',
       `Name: ${name}`,
       `Contact number: ${phone}`,
+      email ? `Email: ${email}` : '',
       `Preferred date: ${date || 'Flexible'}`,
       `Treatment / enquiry: ${service}`,
-      details ? `Additional details: ${details}` : '',
+      details ? `Message: ${details}` : '',
       '',
       'Please let me know about availability. Thank you.'
     ].filter(Boolean).join('\n');
