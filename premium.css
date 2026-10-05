@@ -561,7 +561,7 @@ h1 em, h2 em, .quote-inner em { color: var(--green); font-family: var(--serif); 
 .trust-grid > div:first-child .trust-number { position: relative; }
 .trust-grid > div:first-child .trust-number::after { position: absolute; z-index: -1; top: 50%; left: 50%; width: 42px; height: 42px; border: 1px solid #d8e4b86e; border-radius: 50%; content: ""; transform: translate(-50%,-50%); }
 
-/* Give Google review highlights a clear editorial hierarchy. */
+/* Give Illustrative review highlights a clear editorial hierarchy. */
 .testimonials-section { position: relative; overflow: hidden; }
 .testimonials-section::before {
   position: absolute;

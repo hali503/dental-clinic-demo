@@ -6,6 +6,7 @@ yearElements.forEach((element) => {
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const pageIsVisible = () => document.visibilityState === 'visible';
+const clinic = window.CLINIC_CONFIG;
 
 // Sticky navigation and accessible mobile menu.
 const siteHeader = document.querySelector('.site-header');
@@ -80,12 +81,12 @@ const slideCount = document.getElementById('slide-count');
 const slideDots = document.querySelectorAll('[data-slide-to]');
 const heroSlides = [
   {
-    eyebrow: 'TARIQ DENTAL CARE · PAKPATTAN',
+    eyebrow: `${clinic.name.toUpperCase()} · ${clinic.city.toUpperCase()}`,
     title: 'A healthier smile<br />starts <em>with care.</em>',
-    intro: 'Thoughtful dental care should feel personal, reassuring and easy to ask about. Start a conversation with Tariq Dental Care.',
+    intro: `Thoughtful dental care should feel personal, reassuring and easy to ask about. Start a conversation with ${clinic.name}.`,
     caption: 'PERSONAL CARE, EVERY STEP',
-    image: 'https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QjL6z1ytFLc066qC0e2NU75ImWpoRW-0AiHt_QAAKyiEaATZW-NobKOqJRJr1hnDQ5PmyYkucOT6OwDn-Ji18GPuru-BfBB4FcuHfXCalxY1lvs8tyh3jDFoO5AElVpO5mLNzIN2AA1JDW=w900-h1200-k-no',
-    alt: 'Interior of Tariq Dental Care, from its Google Maps photo gallery',
+    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1000&q=85',
+    alt: 'Illustrative dental clinic interior',
     primary: 'Request a visit',
     secondary: 'Explore treatments',
     secondaryHref: 'services.html'
@@ -95,19 +96,19 @@ const heroSlides = [
     title: 'Feel at ease<br />with your <em>next step.</em>',
     intro: 'A clear conversation can help you feel more prepared. Tell the clinic what is on your mind and ask about your options.',
     caption: 'A CONVERSATION THAT STARTS WITH YOU',
-    image: 'https://lh3.googleusercontent.com/gps-cs-s/ANWiy9SZEYcLJUtwT1NhFuMaj8TA-zorFHKl4Qdd4H_lDt65SxVGVwLqJtGgOCYADu3Up3hZxo2NcWNFJ4PHNuDggQWXB6FnWUi91V-Ckzj6KP5tSKpjHcXLOHVeM_LFyAit4x2Jk8fnQyPQPTJ_=w900-h1200-k-no',
-    alt: 'Tariq Dental Care logo on the reception wall, from its Google Maps photo gallery',
+    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1000&q=85',
+    alt: 'Illustrative dental clinic interior',
     primary: 'Start a conversation',
     secondary: 'Visit the clinic',
     secondaryHref: 'contact.html'
   },
   {
-    eyebrow: 'YOUR LOCAL CLINIC · PAKPATTAN',
+    eyebrow: `YOUR LOCAL CLINIC · ${clinic.city.toUpperCase()}`,
     title: 'Care that feels<br /><em>closer to home.</em>',
-    intro: 'Find Tariq Dental Care in Pakpattan, Punjab. Check the shared map location and get in touch before planning your visit.',
-    caption: 'YOUR LOCAL CLINIC IN PAKPATTAN',
-    image: 'https://lh3.googleusercontent.com/gps-cs-s/ANWiy9QjL6z1ytFLc066qC0e2NU75ImWpoRW-0AiHt_QAAKyiEaATZW-NobKOqJRJr1hnDQ5PmyYkucOT6OwDn-Ji18GPuru-BfBB4FcuHfXCalxY1lvs8tyh3jDFoO5AElVpO5mLNzIN2AA1JDW=w900-h1200-k-no',
-    alt: 'Reception and waiting area at Tariq Dental Care, from its Google Maps photo gallery',
+    intro: `Find ${clinic.name} in ${clinic.location} and get in touch before planning your visit.`,
+    caption: `LOCAL DENTAL CARE · ${clinic.city.toUpperCase()}`,
+    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=1000&q=85',
+    alt: 'Illustrative dental clinic reception and waiting area',
     primary: 'Plan your visit',
     secondary: 'Open directions',
     secondaryHref: 'contact.html'
@@ -289,11 +290,10 @@ setTestimonialAutoplay();
 
 // Appointment form validates locally and prepares a draft the visitor sends themselves.
 const appointmentForm = document.getElementById('appointmentForm');
-const clinicPhone = '0309130600';
-const clinicWhatsAppNumber = `92${clinicPhone.replace(/^0/, '')}`;
+const clinicWhatsAppNumber = clinic.whatsappNumber;
 const whatsappUrl = (message) => `https://wa.me/${clinicWhatsAppNumber}?text=${encodeURIComponent(message)}`;
 document.querySelectorAll('.whatsapp-float').forEach((link) => {
-  link.href = whatsappUrl('Hello Tariq Dental Care, I have an enquiry.');
+  link.href = whatsappUrl(`Hello ${clinic.name}, I have an enquiry.`);
   link.target = '_blank';
   link.rel = 'noopener noreferrer';
 });
@@ -335,7 +335,7 @@ if (appointmentForm) {
     const service = String(formData.get('service') || 'Not specified');
     const details = String(formData.get('details') || '').trim();
     const message = [
-      'Hello Tariq Dental Care, I would like to enquire about an appointment.',
+      `Hello ${clinic.name}, I would like to enquire about an appointment.`,
       '',
       `Name: ${name}`,
       `Contact number: ${phone}`,
